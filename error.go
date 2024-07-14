@@ -506,3 +506,7 @@ func decodeError(_ context.Context, cause error, _ string, safeDetails []string,
 func init() {
 	cockroachdberrors.RegisterWrapperDecoder(cockroachdberrors.GetTypeKey((*Error)(nil)), decodeError)
 }
+
+var _ fmt.Formatter = (*Error)(nil)
+var _ cockroachdberrors.SafeFormatter = (*Error)(nil)
+var _ cockroachdberrors.SafeDetailer = (*Error)(nil)
