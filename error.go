@@ -23,6 +23,7 @@ import (
 	"os"
 	"strings"
 
+	cockroachdberrors "github.com/cockroachdb/errors"
 	"google.golang.org/protobuf/proto"
 	"google.golang.org/protobuf/types/known/anypb"
 )
@@ -462,3 +463,5 @@ func wrapIfMaxBytesError(err error, tmpl string, args ...any) error {
 func typeNameFromURL(url string) string {
 	return url[strings.LastIndexByte(url, '/')+1:]
 }
+
+func (e *Error) Format(s fmt.State, verb rune) { cockroachdberrors.FormatError(e, s, verb) }
