@@ -25,7 +25,6 @@ import (
 	"strings"
 
 	cockroachdberrors "github.com/cockroachdb/errors"
-	gogoproto "github.com/gogo/protobuf/proto"
 	"google.golang.org/protobuf/proto"
 	"google.golang.org/protobuf/types/known/anypb"
 )
@@ -483,7 +482,7 @@ func (e *Error) SafeDetails() []string {
 	return []string{e.code.String(), strconv.FormatBool(e.wireErr)}
 }
 
-func decodeError(_ context.Context, cause error, _ string, safeDetails []string, _ gogoproto.Message) error {
+func decodeError(_ context.Context, cause error, _ string, safeDetails []string, _ proto.Message) error {
 	if len(safeDetails) != 2 {
 		return nil
 	}
