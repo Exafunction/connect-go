@@ -464,4 +464,15 @@ func typeNameFromURL(url string) string {
 	return url[strings.LastIndexByte(url, '/')+1:]
 }
 
+func (e *Error) Cause() error {
+	return e.err
+}
+
 func (e *Error) Format(s fmt.State, verb rune) { cockroachdberrors.FormatError(e, s, verb) }
+
+func (e *Error) SafeFormatError(p cockroachdberrors.Printer) error {
+	if p.Detail() {
+		p.Printf("connect code: %s", e.code.String())
+	}
+	return e.err
+}
