@@ -21,9 +21,11 @@ import (
 	"net/http"
 	"net/url"
 	"os"
+	"strconv"
 	"strings"
 
 	cockroachdberrors "github.com/cockroachdb/errors"
+	gogoproto "github.com/gogo/protobuf/proto"
 	"google.golang.org/protobuf/proto"
 	"google.golang.org/protobuf/types/known/anypb"
 )
@@ -475,4 +477,32 @@ func (e *Error) SafeFormatError(p cockroachdberrors.Printer) error {
 		p.Printf("connect code: %s", e.code.String())
 	}
 	return e.err
+}
+
+func (e *Error) SafeDetails() []string {
+	return []string{e.code.String(), strconv.FormatBool(e.wireErr)}
+}
+
+func decodeError(_ context.Context, cause error, _ string, safeDetails []string, _ gogoproto.Message) error {
+	if len(safeDetails) != 2 {
+		return nil
+	}
+	var code Code
+	err := code.UnmarshalText([]byte(safeDetails[0]))
+	if err != nil {
+		return nil
+	}
+	wireErr, err := strconv.ParseBool(safeDetails[1])
+	if err != nil {
+		return nil
+	}
+	return &Error{
+		code:    code,
+		wireErr: wireErr,
+		err:     cause,
+	}
+}
+
+func init() {
+	cockroachdberrors.RegisterWrapperDecoder(cockroachdberrors.GetTypeKey((*Error)(nil)), decodeError)
 }
