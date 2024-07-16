@@ -473,7 +473,7 @@ func (e *Error) Format(s fmt.State, verb rune) { cockroachdberrors.FormatError(e
 
 func (e *Error) SafeFormatError(p cockroachdberrors.Printer) error {
 	if p.Detail() {
-		p.Printf("connect code: %s", e.code.String())
+		p.Printf("connect code: %s", cockroachdberrors.Safe(e.code.String()))
 	}
 	return e.err
 }
