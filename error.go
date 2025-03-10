@@ -269,7 +269,7 @@ func IsNotModifiedError(err error) bool {
 // errorf calls fmt.Errorf with the supplied template and arguments, then wraps
 // the resulting error.
 func errorf(c Code, template string, args ...any) *Error {
-	return NewError(c, fmt.Errorf(template, args...))
+	return NewError(c, cockroachdberrors.Errorf(template, args...))
 }
 
 // asError uses errors.As to unwrap any error and look for a connect *Error.
